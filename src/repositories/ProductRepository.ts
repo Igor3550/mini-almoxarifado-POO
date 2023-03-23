@@ -14,7 +14,8 @@ export class ProductRepository{
   }
 
   create({ name, categoryId }:Product): void {
-    const product = new Product(name, categoryId);
+    const id = this.products.length + 1;
+    const product = new Product(name, categoryId, id);
     this.products.push(product);
   }
 
@@ -22,5 +23,18 @@ export class ProductRepository{
     const products = this.products;
     if(!products) throw new Error('Empty products list!');
     return products;
+  }
+
+  update({id, name, categoryId}: Product): void {
+    const product = this.products.find(product => product.id === id);
+    if(!product) throw new Error("Product not found!");
+    if(name) product.name = name;
+    if(categoryId) product.categoryId = categoryId;
+  }
+
+  delete(id: number): void {
+    const productIndex = this.products.findIndex(product => product.id === id);
+    if(productIndex < 0) throw new Error("Product not found!")
+    this.products.splice(productIndex, 1);
   }
 }
