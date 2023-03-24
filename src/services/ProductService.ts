@@ -4,23 +4,23 @@ import { ProductRepository } from "../repositories/ProductRepository";
 export class ProductService {
   constructor(private productRepository: ProductRepository ){}
 
-  create({name, categoryId}: Product): void {
+  async create({name, categoryId}: Product<number>): Promise<void> {
     if(!name || !categoryId) throw new Error("Invalid input!");
-    this.productRepository.create({name, categoryId});
+    await this.productRepository.create({name, categoryId});
   }
 
-  list(): Product[]{
-    const categoryList = this.productRepository.getAll();
+  async list(): Promise<Product<number>[]>{
+    const categoryList = await this.productRepository.getAll();
     return categoryList;
   }
 
-  update({id, name, categoryId}: Product): void {
+  async update({id, name, categoryId}: Product<number>): Promise<void> {
     if(!id) throw new Error("Invalid input!");
-    this.productRepository.update({id, name, categoryId});
+    await this.productRepository.update({id, name, categoryId});
   }
 
-  delete(id: number): void {
+  async delete(id: number): Promise<void> {
     if(!id) throw new Error("Invalid input!");
-    this.productRepository.delete(id);
+    await this.productRepository.delete(id);
   }
 }

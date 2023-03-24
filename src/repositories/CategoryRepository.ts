@@ -1,39 +1,46 @@
 import { Category } from "../models/Category";
+import prisma from "../database/db";
 
 export class CategoryRepository{
-  private categories: Category[];
-  private static INSTANCE: CategoryRepository;
 
-  constructor (){
-    this.categories = [];
+  async create({ name }: Category<number>): Promise<void> {
+    await prisma.category.create({
+      data:{
+        name
+      }
+    });
   }
 
-  public static getInstance(): CategoryRepository {
-    if(!this.INSTANCE) this.INSTANCE = new CategoryRepository();
-    return this.INSTANCE;
+  async getAll(): Promise<Category<number>[]> {
+    return await prisma.category.findMany();
   }
 
-  create({ name }: Category): void {
-    const id = this.categories.length+1;
-    const category:Category = new Category(name, id);
-    this.categories.push(category);
+  async update({id, name}: Category<number>): Promise<void> {
+    await prisma.category.update({
+      where:{
+        id
+      },
+      data:{
+        name
+      }
+    });
   }
 
-  getAll(): Category[] {
-    const categories = this.categories;
-    if(!categories) throw new Error('Empty categoies list!')
-    return categories;
+  async delete(id: number): Promise<void> {
+    await prisma.category.delete({
+      where:{
+        id
+      }
+    });
   }
 
-  update({id, name}: Category): void {
-    const category = this.categories.find(category => category.id === id);
+  async getCategoryById(id:number): Promise<Category<number>> {
+    const category = await prisma.category.findFirst({
+      where:{
+        id
+      }
+    });
     if(!category) throw new Error("Category not found!")
-    category.name = name;
-  }
-
-  delete(id: number): void {
-    const categoryIndex = this.categories.findIndex(category => category.id === id);
-    if(categoryIndex < 0) throw new Error("Category not found!")
-    this.categories.splice(categoryIndex, 1);
+    return category;
   }
 }

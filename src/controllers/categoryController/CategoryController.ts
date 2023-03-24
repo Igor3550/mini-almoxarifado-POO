@@ -4,26 +4,42 @@ import { CategoryService } from "../../services/CategoryService";
 export class CategoryController {
   constructor(private categoryService: CategoryService) {}
 
-  create(req: Request, res: Response): Response {
+  async create(req: Request, res: Response): Promise<Response> {
     const { name } = req.body;
-    this.categoryService.create(name);
-    return res.sendStatus(201);
+    try {
+      await this.categoryService.create(name);
+      return res.sendStatus(201);
+    } catch (error) {
+      return res.sendStatus(500);
+    }
   }
 
-  getAll(req: Request, res: Response): Response {
-    const categoies = this.categoryService.list();
-    return res.send(categoies);
+  async getAll(req: Request, res: Response): Promise<Response> {
+    try {
+      const categoies = await this.categoryService.list();
+      return res.send(categoies);
+    } catch (error) {
+      return res.sendStatus(500);
+    }
   }
 
-  update(req: Request, res: Response): Response {
+  async update(req: Request, res: Response): Promise<Response> {
     const { id, name } = req.body;
-    this.categoryService.update({id, name});
-    return res.sendStatus(200);
+    try {
+      await this.categoryService.update({id, name});
+      return res.sendStatus(200);
+    } catch (error) {
+      return res.sendStatus(500);
+    }
   }
 
-  delete(req: Request, res: Response): Response {
+  async delete(req: Request, res: Response): Promise<Response> {
     const { id } = req.body;
-    this.categoryService.delete(id);
-    return res.sendStatus(200);
+    try {
+      await this.categoryService.delete(id);
+      return res.sendStatus(200);
+    } catch (error) {
+      return res.sendStatus(500);
+    }
   }
 }

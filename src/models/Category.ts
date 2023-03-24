@@ -1,6 +1,6 @@
-export class Category {
+export class Category<T> {
   constructor (
     public name: string,
-    public id?: number
+    public id?: T
   ) {}
 }

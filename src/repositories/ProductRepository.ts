@@ -1,40 +1,49 @@
 import { Product } from "../models/Product";
+import prisma from "../database/db";
 
 export class ProductRepository{
-  private products: Product[];
-  private static INSTANCE: ProductRepository;
 
-  constructor() {
-    this.products = [];
+  async create({ name, categoryId }: Product<number>): Promise<void> {
+    await prisma.product.create({
+      data: {
+        name,
+        categoryId
+      }
+    })
   }
 
-  public static getInstance(): ProductRepository {
-    if(!this.INSTANCE) this.INSTANCE = new ProductRepository();
-    return this.INSTANCE;
-  }
-
-  create({ name, categoryId }:Product): void {
-    const id = this.products.length + 1;
-    const product = new Product(name, categoryId, id);
-    this.products.push(product);
-  }
-
-  getAll():Product[] {
-    const products = this.products;
-    if(!products) throw new Error('Empty products list!');
+  async getAll(): Promise<Product<number>[]> {
+    const products = await prisma.product.findMany();
     return products;
   }
 
-  update({id, name, categoryId}: Product): void {
-    const product = this.products.find(product => product.id === id);
-    if(!product) throw new Error("Product not found!");
-    if(name) product.name = name;
-    if(categoryId) product.categoryId = categoryId;
+  async update({id, name, categoryId}: Product<number>): Promise<void> {
+    await prisma.product.update({
+      where:{
+        id
+      },
+      data:{
+        name,
+        categoryId
+      }
+    })
   }
 
-  delete(id: number): void {
-    const productIndex = this.products.findIndex(product => product.id === id);
-    if(productIndex < 0) throw new Error("Product not found!")
-    this.products.splice(productIndex, 1);
+  async delete(id: number): Promise<void> {
+    await prisma.product.delete({
+      where:{
+        id
+      }
+    })
+  }
+
+  async getCategoryById(id: number): Promise<Product<number>> {
+    const product = await prisma.product.findFirst({
+      where:{
+        id
+      }
+    });
+    if(!product) throw new Error("Product not found!");
+    return product;
   }
 }

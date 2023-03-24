@@ -4,22 +4,26 @@ import { CategoryRepository } from "../repositories/CategoryRepository";
 export class CategoryService {
   constructor(private categoryRepository: CategoryRepository ){}
 
-  create(name: string): void {
+  async create(name: string): Promise<void> {
     if(!name) throw new Error("Invalid input!");
-    this.categoryRepository.create({name});
+    await this.categoryRepository.create({name});
   }
 
-  list(): Category[]{
-    const categoryList = this.categoryRepository.getAll();
-    return categoryList;
+  async list(): Promise<Category<number>[]> {
+    return await this.categoryRepository.getAll();
   }
 
-  update({id, name}: Category): void {
-    this.categoryRepository.update({id, name});
+  async getCategoryById(id: number): Promise<Category<number>> {
+    return await this.categoryRepository.getCategoryById(id);
   }
 
-  delete(id: number): void {
+  async update({id, name}: Category<number>): Promise<void> {
+    if(!id || !name) throw new Error("No content")
+    await this.categoryRepository.update({id, name});
+  }
+
+  async delete(id: number): Promise<void> {
     if(!id) throw new Error("Invalid input!");
-    this.categoryRepository.delete(id);
+    await this.categoryRepository.delete(id);
   }
 }
